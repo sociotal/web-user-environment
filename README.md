@@ -5,14 +5,14 @@ The User Environment integrates and uses several platform components.
 
 ## Directory Structure
 
-The `web_user_environment` directory in this repository has the following structure:
+The `web-user-environment` directory in this repository has the following structure:
 
 ```
 -deployment/
   |__src/  #contains the source code, see README file to configure and run it.
   |__application/ #contains a zip file to download, unzip it and see README file.
--documentation/
-  # current directory containing this file.
+-README.md/
+  # this file.
 
 ```
 
