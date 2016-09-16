@@ -18,17 +18,17 @@ var notifier = {
 
 
 var optionsSmtpTransport = {
-    host: 'smtp.crs4.it',
+    host: 'YOUR_SMTP',
     port: 587,
     auth: {
-        user: 'sociotal-team',
-        pass: 'crisoprasio.puffetta' },
+        user: 'SMTP_USER',
+        pass: 'SMTP_PASSWD' },
     authMethod: 'PLAIN'
 
 };
 
-var recaptcha_secret_key = "6LcTcAoTAAAAAOBz6nqvmSfpwaX6dzpflVLQqrPd";
-var recaptcha_site_key = "6LcTcAoTAAAAAEFnKvRMswenmIDQpbAwU7noTt00";
+var recaptcha_secret_key = "YOUR_VALID_RECAPTCHA_SECTER_KEY";
+var recaptcha_site_key = "YOUR_VALID_RECAPTCHA_SECTER_KEY";
 
 var pathsContextManager = {
     v3LocalMachine: 'https://localhost:8443/SocIoTal_CM_REST_V3',
