@@ -10,9 +10,9 @@
 // 2) change access_token variable with a valid token related to a user existing in the server
 
 var protocol = "http";
-var servername = "sociotal.crs4.it";
+var servername = "platform2.sociotal.eu";
 var endpoint = protocol + '://' + servername + '/api';
-var access_token = "5Vr2dRxZ";  // lbsdev.crs4.it = fqLVMUdD; sociotal.crs4.it = 02eDcZ5r
+var access_token = "rrc0u6ll";  // lbsdev.crs4.it = fqLVMUdD; sociotal.crs4.it = 02eDcZ5r
 var new_access_token = "H8A0n2KS";
 
 

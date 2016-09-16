@@ -1,5 +1,5 @@
 # Sociotal User Environment
-##Last Version: 5.0.1
+##Last Version: 5.1.1
 Sociotal node.js application.
 
 - mongodb (IMPORTANT: USE VERSION 2.6.10 - Version 3.0 is not supported) and mongoose (as database engine and data modeling)
@@ -188,6 +188,23 @@ $ npm test
 ```
 
 # CHANGELOG
+
+## v5.1.1
+- bug fix user profile attributes are now synchronized with the identity manager
+
+## v5.1.0
+- added update user attributes in the profile page
+- removed filter to view only SocIoTal device from the context manager query. Now it queries all the devices.
+
+## v5.0.4
+- bug fix notification port in subscription.
+- bug fix in the join community request
+
+## v5.0.3
+- bug fix xively channel.
+
+## v5.0.2
+- bug fix new community name. Now spaces are replaced by "_"
 
 ## v5.0.1
 - bug fix api/data

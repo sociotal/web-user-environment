@@ -18,17 +18,17 @@ var notifier = {
 
 
 var optionsSmtpTransport = {
-      host: 'SMTP_SERVER_ADDRESS',
-      port: SMPT_PORT,
-      auth: {
-          user: 'USENAME_ACCOUNT',
-          pass: 'PASSWORD_ACCOUNT' },
-      authMethod: 'PLAIN'
+    host: 'smtp.crs4.it',
+    port: 587,
+    auth: {
+        user: 'sociotal-team',
+        pass: 'crisoprasio.puffetta' },
+    authMethod: 'PLAIN'
 
-  };
+};
 
-var recaptcha_secret_key = "YOUR_VALID_RECAPTCHA_SECTER_KEY";
-var recaptcha_site_key = "YOUR_VALID_RECAPTCHA_SITE_KEY";
+var recaptcha_secret_key = "6LcTcAoTAAAAAOBz6nqvmSfpwaX6dzpflVLQqrPd";
+var recaptcha_site_key = "6LcTcAoTAAAAAEFnKvRMswenmIDQpbAwU7noTt00";
 
 var pathsContextManager = {
     v3LocalMachine: 'https://localhost:8443/SocIoTal_CM_REST_V3',
@@ -49,26 +49,30 @@ var identityManagerRemoteServer = {
     domain_id : "................",
     keyrock_ip : "sociotalkeyrock.inf.um.es",
     keyrock_port : "35357",
-    keyrock_port_ssl : "443"
+    keyrock_port_ssl : "443",
+    cert_name : "ca.cer"
 };
 
 var capabilityManagerServer = {
-    keystore_password : "lxxekBfcFPBZW6XdZNfV",
+    keystore_file : "client-sociotal-eu.p12",
+    keystore_password : "eUy7CQCs8m6RS4cgpCV6",
     capability_manager_address : "https://sociotal.inf.um.es:8443/CapabilityManagerServlet/CapabilityManager",
 };
 
 //**********************************************************************************************************************
 
 var identityManagerLocalMachine = {                                // CHECK PARAMS FOR THE INTEGRATED VIRTUAL MACHINE
-    admin_token : "Ud1d36gb6xfiHJbFQPU6",
+    admin_token : "HGOGYiDg1AfVKnaAQOr6", //"Ud1d36gb6xfiHJbFQPU6",
     domain_id : "................",
     keyrock_ip : "localhost",
     keyrock_port : "35357",
-    keyrock_port_ssl : "8443"
+    keyrock_port_ssl : "8443",
+    cert_name : "PrivateRootCA.cer"
 };
 
 var capabilityManagerLocalMachine = {
-    keystore_password : "lxxekBfcFPBZW6XdZNfV",
+    keystore_file : "client-sociotal-eu.p12",
+    keystore_password : "eUy7CQCs8m6RS4cgpCV6",
     capability_manager_address : "https://localhost:8443/CapabilityManagerServlet/CapabilityManager"
 };
 
@@ -82,6 +86,7 @@ module.exports = {
     //PRODUCTION
     production: {
         port: 80,
+        portHTTPS: 443,
         db: 'mongodb://localhost/sociotal',
         root: rootPath,
         notifier: notifier,
@@ -127,6 +132,7 @@ module.exports = {
     //DEVELOPMENT LOCALHOST
     development: {
         port: 3000,
+        portHTTPS: 443,
         db: 'mongodb://localhost/sociotalDev',
         root: rootPath,
         notifier: notifier,
@@ -171,6 +177,7 @@ module.exports = {
     //INTEGRATED VIRTUAL MACHINE LOCALHOST
     virtualMachine: {
         port: 3000,
+        portHTTPS: 443,
         db: 'mongodb://localhost/sociotal',
         root: rootPath,
         notifier: notifier,

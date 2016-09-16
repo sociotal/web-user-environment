@@ -33,7 +33,7 @@ html(lang='en')
                     .form-group
                       .alert.alert-danger.hidden
                       label Community Name
-                      input.form-control#name(type='text', name="name", value="", placeholder='Enter name for the community')
+                      input.form-control#name(type='text', name="name", value="", placeholder='Enter name for the community', onchange="checkName()")
                     .form-group
                       label Description
                       input.form-control#description(type='text', name="description", placeholder='Enter description for the community')

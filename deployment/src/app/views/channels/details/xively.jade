@@ -29,19 +29,20 @@ html(lang='en')
         subs = new Subscription();
         
         if (subscribed){
-          $('#button-sub>i').attr('class', 'fa fa-pause');
+          $('#button-sub>i').attr('class', 'fa fa-stop');
           $('#button-sub').tooltip('hide')
                   .attr('data-original-title', 'Unsubscribe to stop gathering data')
                   .tooltip('fixTitle');
-          $('#run-status').text("Subscribed      ");
+          $('#run-status').text("Active      ");
 
         } else {
           $('#button-sub>i').attr('class', 'fa fa-play');
+          $('#button-sub').attr("class", "btn btn-circle");
           $('#button-sub').tooltip('hide')
                   .attr('data-original-title', 'Subscribe to start gathering data')
                   .tooltip('fixTitle');
 
-          $('#run-status').text("Unsubscribed    ");
+          $('#run-status').text("Off    ");
 
         }
 
@@ -69,20 +70,30 @@ html(lang='en')
 
         $.getJSON("/channels/" + channel._id + "/run", data, function (response) {
           if (response.success && response.started) {
-            $('#button-sub>i').attr('class', 'fa fa-pause');
-            $('#run-status').text('Subscribed      ');
+            $('#button-sub>i').attr('class', 'fa fa-stop');
+            $('#button-sub').attr("class", "btn btn-success btn-circle");
             $('#button-sub').tooltip('hide')
                     .attr('data-original-title', 'Unsubscribe to stop gathering data')
-                    .tooltip('fixTitle');
+                    .tooltip('fixTitle')
+                    .tooltip('show');
+
+            $('#run-status').text('Active   ');
+
             subscribed = true;
 
           }
           if (response.success && response.stopped) {
             $('#button-sub>i').attr('class', 'fa fa-play');
-            $('#run-status').text('Unsubscribed     ');
+            $('#button-sub').attr("class", "btn btn-circle");
             $('#button-sub').tooltip('hide')
                     .attr('data-original-title', 'Subscribe to start gathering data')
-                    .tooltip('fixTitle');
+                    .tooltip('fixTitle')
+                    .tooltip('show');
+
+
+            $('#run-status').text('Off\t\t\t');
+
+
             subscribed = false;
 
           }
@@ -127,7 +138,9 @@ html(lang='en')
                   | Below you can find all the details of this Channel: general info, produced data and the listing of all the connections to other Channels.
                   | To start gathering data, please click on the Subscribe button.
           br
-                  
+
+
+
           .row
             .col-md-10
               // channel info table
@@ -157,19 +170,27 @@ html(lang='en')
                             td Tags
                             td #{channel.tags}
 
+          br
+
+          .row
+            .col-lg-4
+              .col-md-4
+                h5(style="color:grey;") Subscription:
+              .col-md-3
+                h5(id="run-status", style="color:green;")
 
           .row
             .col-lg-12
               .col-md-10
                 .panel.panel-default
                   .panel-heading
-                    .col-lg-10
+                    .col-md-6
                       | Data (
                       span(id="data-count") 0
                       span(id="data-page")
                       |)
 
-                    .col-md-2.text-right
+                    .col-md-6.text-right
                       input(type="hidden", id="channel_id", value="#{channel._id}")
 
                       span(id="run-status")

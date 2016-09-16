@@ -760,7 +760,7 @@ function getCommunityToken(idm_token, community_name, domain_name, cb){
     debug("response.status "+response.statusCode);
 
 
-    if(error || response.statusCode == '404') {
+    if(error || response.statusCode == '404' || response.statusCode == '401' || response.statusCode == '403' ) {
       debug("getCommunityToken error "+error);
       cb("getCommunityToken error "+error, null);
     } else {

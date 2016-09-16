@@ -82,9 +82,17 @@ module.exports = function (passport, config) {
                 newUser.provider = 'keyrock';
                 newUser.active = true;
                 newUser.idm_token = idm_token;
-                newUser.idm_id = entity.getIdSync().getValueSync()
-                newUser.email = entity.getAttributeSync("emails").getValueSync().getSync(0)
+                newUser.idm_id = entity.getIdSync().getValueSync();
+                newUser.email = entity.getAttributeSync("emails").getValueSync().getSync(0);
+                newUser.organization = entity.getAttributeSync("organization").getValueSync();
+                newUser.department = entity.getAttributeSync("department").getValueSync();
 
+                var address = entity.getAttributeSync("addresses").getValueSync().getSync(0);  // we use only the first address
+
+                newUser.address.streetAddress = address.getStreetAddressSync();
+                newUser.address.city = address.getLocalitySync();
+                newUser.address.postalCode = address.getPostalCodeSync();
+                newUser.address.country = address.getCountrySync();
 
 
 
@@ -118,33 +126,45 @@ module.exports = function (passport, config) {
             } else if (!user.active) {
               return done(null, false, {message: 'User not active'})
             } else if (user) {
-              debug ("user presente ma aggiorno idm auth token al login....\n")
-              user.idm_token = idm_token;
+              identity.getEntityByUserName(username, function (err, entity) {
+                debug("user presente ma aggiorno idm auth token al login....\n")
 
 
+                user.idm_token = idm_token;
+                user.organization = entity.getAttributeSync("organization").getValueSync();
+                user.department = entity.getAttributeSync("department").getValueSync();
 
-              Channel.find({user: user._id}, function(err, channels) {
-                if(channels) {
-                  channels.forEach(function (channel) {
+                var address = entity.getAttributeSync("addresses").getValueSync().getSync(0);  // we use only the first address
 
-                    if (channel._type === "CommunityMailChannel") {
+                user.address.streetAddress = address.getStreetAddressSync();
+                user.address.city = address.getLocalitySync();
+                user.address.postalCode = address.getPostalCodeSync();
+                user.address.country = address.getCountrySync();
 
-                      debug("channelmail idmtoken is: "+channel.user_idm_token);
 
-                      channel.user_idm_token = user.idm_token;
-                      channel.save();
+                Channel.find({user: user._id}, function (err, channels) {
+                  if (channels) {
+                    channels.forEach(function (channel) {
 
-                      debug("channelmail idmtoken is: "+channel.user_idm_token);
+                      if (channel._type === "CommunityMailChannel") {
 
-                    }
-                  });
-                }
-              });
+                        debug("channelmail idmtoken is: " + channel.user_idm_token);
 
-              user.save(function (err) {
-                if (err)
-                  debug(err);
-                return done(null, user);
+                        channel.user_idm_token = user.idm_token;
+                        channel.save();
+
+                        debug("channelmail idmtoken is: " + channel.user_idm_token);
+
+                      }
+                    });
+                  }
+                });
+
+                user.save(function (err) {
+                  if (err)
+                    debug(err);
+                  return done(null, user);
+                });
               });
             }
 

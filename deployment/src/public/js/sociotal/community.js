@@ -8,6 +8,11 @@ function Community(){}
 
 
 
+function checkName() {
+  console.log("inside check name");
+  var newName = $('#name').val().replace(/ /g, '_');
+  $('#name').val(newName);
+}
 
 
 function saveCommunity(){

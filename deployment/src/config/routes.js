@@ -58,6 +58,8 @@ module.exports = function (app, passport) {
 
     app.get('/users/:userId', auth.requiresLogin, users.show);
     app.delete('/users/:userId', deleteUserAuth, users.delete);
+    app.post('/users/:userId', auth.requiresLogin, users.update);
+
     app.get('/users/activation/:token', users.activation);
     app.get('/users/password/forgot', users.forgot);
     app.post('/users/password/email', users.sendEmail);

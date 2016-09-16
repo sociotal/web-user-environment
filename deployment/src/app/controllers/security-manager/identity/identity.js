@@ -31,13 +31,17 @@ fs.readdirSync(libs_path).forEach(function (file) {
 
 var HTTPS = java.getStaticFieldValue("es.um.security.utilities.Protocols", "HTTPS");
 var cas_certificates = java.newInstanceSync("java.util.ArrayList");
-var ca_cert = java.callStaticMethodSync("es.um.security.utilities.CertificateUtil", "getCertificate", CERTS_FOLDER+"ca.cer");
+var ca_cert = java.callStaticMethodSync("es.um.security.utilities.CertificateUtil", "getCertificate", CERTS_FOLDER + config.identityManagerParams.cert_name);
 if (ca_cert != null)  {
     cas_certificates.addSync(ca_cert);
 }
 
 var idm = java.newInstanceSync(BASE_PACKAGE_IDM+".admin.implementation.KeyRockIdMAdminClient", ADMIN_TOKEN, HTTPS, cas_certificates, KEYROCK_IP, KEYROCK_PORT_SSL);
 
+console.log(ADMIN_TOKEN);
+console.log(DOMAIN_ID);
+console.log(KEYROCK_IP);
+console.log(KEYROCK_PORT_SSL);
 
 
 function _createEntity(_id, _name, _nickName, _userName, _email, _address, _password, cb){
@@ -149,6 +153,57 @@ function _addEntity(entity, id, cb) {
     });
 }
 
+/* ##### UPDATE ENTITY (e.g. User) ##### */
+function _updateEntity(id, org, department, streetAddress, locality, postalCode, country, cb) {
+    console.log("##### UPDATE ENTITY #####");
+    var res;
+
+    idm.getEntityById(id, function(err, entity){
+        if (err){
+            res = "ERROR item does not exists on keyrock "+err;
+            cb(res);
+        }else{
+            entity.removeAttribute(entity.getAttributeSync("organization"));
+            entity.removeAttribute(entity.getAttributeSync("department"));
+            entity.removeAttribute(entity.getAttributeSync("addresses"));
+
+            var att_organization = java.newInstanceSync(BASE_PACKAGE_IDM+".entities.attributes.Organization", org);
+            var organization_obj = java.newInstanceSync(BASE_PACKAGE_IDM+".entities.attributes.Attribute","organization", att_organization);
+            entity.setAttribute(organization_obj);
+
+            var att_department = java.newInstanceSync(BASE_PACKAGE_IDM+".entities.attributes.Department", department);
+            var department_obj = java.newInstanceSync(BASE_PACKAGE_IDM+".entities.attributes.Attribute","department", att_department);
+            entity.setAttribute(department_obj);
+
+            var address = java.newInstanceSync(BASE_PACKAGE_IDM+".entities.attributes.Address", "type", streetAddress, locality, postalCode, country);
+            var arrayAddresses = java.newInstanceSync("java.util.ArrayList");
+            arrayAddresses.addSync(address);
+            var addresses = java.newInstanceSync(BASE_PACKAGE_IDM+".entities.attributes.Attribute", "addresses", arrayAddresses);
+            entity.setAttribute(addresses);
+
+            idm.updateEntity(entity);
+            res = "User Successfully updated";
+
+            cb(res);
+        }
+
+    });
+
+
+    // idm.updateEntity(newEntity, function(err, item){
+    //     if(err){
+    //         debug("err on updateEntity "+err);
+    //         res = "error with updateEntity on keyrock"+message;
+    //     }else{
+    //         debug("not err on updateEntity "+item);
+    //         res = newEntity;
+    //     }
+    //     cb(res);
+    // });
+
+}
+
+
 
 /* ##### REMOVE ENTITY BY ID (e.g. User) ##### */
 function _removeEntityByID(id, cb) {
@@ -217,6 +272,17 @@ exports.addEntity = function(user, password, _cb) {
         });
     });
 };
+
+
+exports.updateEntity = function(id, org, department, streetAddress, locality, postalCode, country, cb){
+
+    _updateEntity(id, org, department, streetAddress, locality, postalCode, country, function (res){
+        cb(res);
+    });
+}
+
+
+
 
 exports.removeEntityById = function(id, _cb) {
     debug("removing entity with id from keyrock"+id);
@@ -288,8 +354,30 @@ exports.setEntityPassword = function(username, new_password, _cb){
         }
     });
 
+};
 
-}
+function _setOrganization(id, new_organization, _cb){
+    debug("##### SET ENTITY organization #####");
+
+    idm.getEntityById(id, function(err, entity){
+        if(err){
+            debug("non presente come username");
+            _cb("ERROR user not exists " + err, null);
+        } else if (entity){
+            debug("username: "+ entity.getUserNameSync().getValueSync())
+            entity.removeAttribute(entity.getAttributeSync("organization"));
+            var att_organization = java.newInstanceSync(BASE_PACKAGE_IDM+".entities.attributes.Organization", new_organization);
+            var organization = java.newInstanceSync(BASE_PACKAGE_IDM+".entities.attributes.Attribute","organization", att_organization);
+            entity.setAttribute(organization);
+            idm.updateEntity(entity);
+
+            _cb("Organization updated!" + entity.toString());
+        }
+    });
+
+};
+
+
 
 
 /////////////////////// ************************************ TEST PART ************************************ //////////////////////
@@ -326,10 +414,21 @@ exports.setEntityPassword = function(username, new_password, _cb){
 //  console.log("test is "+ test);
 //}
 
-//debug(getEntityById("2f234fw3fwfwf42"));
-//_authenticateByName("clientOne", "passw0rdCl1ent", function(res){
+// _authenticateByName("clientOne", "passw0rdCl1ent", function(res){
 //    console.log(res);
 //
-//});
+// });
+
+// console.log(_getEntityById("c4f48a19-1846-4b6c-9f17-0572f1f1975e"));
+
+// _setOrganization("c4f48a19-1846-4b6c-9f17-0572f1f1975e", "crs4_new", function(res){
+//     console.log(res);
+// });
+
+// _updateEntity("c4f48a19-1846-4b6c-9f17-0572f1f1975e", "CRS4", "crs4_department", "work", "Piscina MAnna", "Pula", "09010", "Italy", function (res){
+//    console.log(res);
+// });
+
+
 
 //////////////////********************************************************************************************* /////////////////////

@@ -187,8 +187,13 @@ XivelyChannelSchema.methods.apiCall = function(onResult)
       headers:{}
     };
 
-    var req = https.request(options, function(res)
-    {
+
+  var Channel = mongoose.model('Channel');
+
+
+
+
+  var req = https.request(options, function(res) {
         var output = '';
         debug(options.host + ':' + res.statusCode);
         res.setEncoding('utf8');
@@ -202,17 +207,27 @@ XivelyChannelSchema.methods.apiCall = function(onResult)
             debug("respose feed: " + JSON.stringify(obj));
             var time = new Date();
 
-            if( self.inbox.length >= INBOX_LIMIT_MAX)
-                self.inbox.shift();
+            debug("inbox:");
+            debug(JSON.stringify(self));
 
-            var pay = self.prepareInboxData(obj);
-            self.inbox.push(pay);    // save new data inside inbox
-            self.save();             // save inside db
+            Channel.findOne({'_id': self._id}, function(err, channel){
+              debug("channel inbox");
+              debug(JSON.stringify(channel));
 
-            onResult(res.statusCode, {date_created: time, payload: pay});
+              self.inbox = channel.inbox;  // riassegno la inbox a self perche' e' stata rimossa dalla request
+
+              if( self.inbox.length >= INBOX_LIMIT_MAX)
+                  self.inbox.shift();
+
+              var pay = self.prepareInboxData(obj);
+              self.inbox.push(pay);    // save new data inside inbox
+              self.save();             // save inside db
+
+              onResult(res.statusCode, {date_created: time, payload: pay});
+            });
         });
 
-    });
+  });
 
     req.on('error', function(err) {
         debug(options.host + ':' + err);

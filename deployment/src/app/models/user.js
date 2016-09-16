@@ -24,6 +24,14 @@ var CommunitySchema = mongoose.Schema({
 var UserSchema = new Schema({
   name: { type: String, default: '' },
   email: { type: String, default: '' },
+  address: {
+    streetAddress : {type: String, default: ''},
+    city : {type: String, default: ''},
+    postalCode : {type: String, default: ''},
+    country : {type: String, default: ''},
+  },
+  organization: { type: String, default: ''},
+  department: { type: String, default: ''},
   username: { type: String, default: '' },
   idm_id: {type: String, default: ''},
   idm_token: {type: String, default: ''},

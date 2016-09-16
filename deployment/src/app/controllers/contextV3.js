@@ -100,7 +100,7 @@ exports.list = function(req, res, next){
                 {
                     "type": "",
                     "isPattern": "true",
-                    "id": "SocIoTal:.*"
+                    "id": "*"
                 }]
         };
 
@@ -436,7 +436,18 @@ exports.register = function (req, res) {
             // check if the community is ALL - 0C. If so no community token will be provided.
             if (req.body.context.community == "0C"){
                 communityToken = null;
+                var updateRestriction = {
+                    "name": "update",
+                    "value": "open",
+                    "type": "text"
+                };
+                context.contextElements[0].attributes.push(updateRestriction);
+
             }
+
+
+        debug("CONTEXTTTTT***********************************");
+        debug(context.contextElements[0].attributes);
 
             var options = {
 
@@ -450,6 +461,8 @@ exports.register = function (req, res) {
                 cap_token: null //this is always a JAVA object To see the content use .toString();
 
             };
+
+
 
 
             if (!communityToken){
@@ -553,7 +566,7 @@ exports.update = function (req, res) { // to be finished
         "id": req.body.context.id,
         "attributes": req.body.context.attributes
     }],
-        updateAction : "UPDATE"
+        updateAction : action //"UPDATE"
     };
 
 
@@ -580,20 +593,28 @@ exports.update = function (req, res) { // to be finished
             cap_token : null //this is always a JAVA object To see the content use .toString();
 
         };
-        debug("\n\n\n\n\n\n\n ********************* OPTIONS ARE: "+JSON.stringify(options));
+        debug("\n\n\n\n\n\n\n ********************* OPTIONS ARE: ");
+        debug(options);
 
 
         capability.getCMResource(options, function(statusCode, response){
             // debug("Code response from Context Manager: " +  JSON.stringify(statusCode));
             // debug("Response body: " + JSON.stringify(response));
-            if(response.error !== undefined && response.error == 401) res.send({message: "Context Manager not available: Unauthorized "});
+            debug("\n\n\**************************************************************************************************")
+            debug("Context Manager response: ");
+            debug(response);
+            debug(response.errorCode);
+            debug("\n\n\**************************************************************************************************")
+
 
             // REGISTER VIRTUAL ENTITY FOR THIS DEVICE
             if(statusCode == 200 && response.contextResponses !== undefined){
-                res.send({result: response.contextResponses[0].contextElement});
+                res.send({error: false, result: response.contextResponses[0].contextElement});
             } else {
-                res.send({result: "RegisterDevice: Something goes wrong while registering the device in the Context Manager \n", response: response});
+                res.send({error: true, result: "RegisterDevice: Something goes wrong while registering the device in the Context Manager \n", response: response});
             }
+
+
         });
     });
 
@@ -680,7 +701,7 @@ exports.discovery_POST = function (req, res, next) {
     var data =  {"entities":
         [{"type": "",
             "isPattern": "true",
-            "id": "SocIoTal:*"}],
+            "id": "*"}],
         "attributes": req.body.attributes
     };
 
@@ -736,7 +757,9 @@ exports.discovery_POST = function (req, res, next) {
 exports.subscribe = function(req, form_data, onResult){
     debug("Context Manager subscribeContext");
 
-    var base_url =  "https://" +  form_data.hostname + ":" + config.port;
+    // var base_url =  "https://" +  form_data.hostname + ":" + config.port;
+    var base_url =  "http://" + form_data.hostname ;    // ALBERTO EDITED because of the port and protocol conflicts in the VM. CM notification does not support HTTPS right now.
+
     var reference = base_url + "/api/channels/" + form_data.channel_id + "/receive";
     debug("form_data received: "+JSON.stringify(form_data));
     var community_name = form_data.community_name;

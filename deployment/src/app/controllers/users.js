@@ -222,7 +222,7 @@ exports.create = function (req, res) {
 										from: 'SocIoTal team <sociotal-team@crs4.it>',
 										subject: 'SocIoTal Account Activation',
 										text: 'Hi ' + req.body.name + ',\n\n' +
-										'you are receiving this email because you have requested an account registration to https://sociotal.crs4.it.\n\n' +
+										'you are receiving this email because you have requested an account registration to ' + protocol +'://' + req.headers.host + '.\n\n' +
 										'Please click on the following link, or paste it into your browser to complete the process:\n\n' +
 										protocol +'://' + req.headers.host + '/users/activation/' + user.activationToken +
 										'\n\nIf you did not request this, please ignore this email.\n\n' +
@@ -318,15 +318,16 @@ exports.sendEmail = function (req, res) {
 
 				// send activation account email
 				// var transporter = nodemailer.createTransport(); // direct transport
+				var protocol = (process.env.NODE_ENV === 'virtualMachine')? "http" : req.protocol;
 
 				var mailOptions = {
 					to: req.body.email,
 					from: 'SocIoTal team <sociotal-team@crs4.it>',
 					subject: 'SocIoTal Password Reset',
 					text: 'Hi ' + user.name + ',\n\n' +
-					'you are receiving this message because you have requested to reset your account password for https://sociotal.crs4.it.\n\n' +
+					'you are receiving this message because you have requested to reset your account password for ' + protocol +'://' + req.headers.host + '.\n\n' +
 					'Please click the following link, or copy and paste it into your browser to complete the process:\n\n' +
-					'https://' + req.headers.host + '/users/activation/' + user.activationToken + '?email=' + req.body.email +
+					protocol +'://' + req.headers.host + '/users/activation/' + user.activationToken + '?email=' + req.body.email +
 					'\n\nIf you did not request to reset the password, please ignore this email.\n\n' +
 					'Best Regards!'
 				};
@@ -362,6 +363,29 @@ exports.sendEmail = function (req, res) {
 
 
 };
+
+exports.update = function (req,res){
+	debug("sono in update User");
+
+	identity.updateEntity(req.user.idm_id, req.body.organization, req.body.department, req.body.streetAddress,
+												req.body.city, req.body.postalCode, req.body.country, function(result){
+			debug(result);
+
+			//updating user collection in user env db
+			User.findOne({ username: req.user.username }, function (err, user) {
+					user.department = req.body.department;
+					user.organization = req.body.organization;
+					user.address.streetAddress = req.body.streetAddress;
+					user.address.city = req.body.city;
+					user.address.postalCode = req.body.postalCode;
+					user.address.country = req.body.country;
+
+					user.save();
+			});
+
+			res.redirect('users/'+req.user._id);
+	});
+}
 
 
 exports.resetPassword = function (req, res) {

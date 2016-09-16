@@ -19,7 +19,7 @@ html(lang='en')
           .row
             .col-lg-12
               p.description
-                 | Hi <b>#{user.name.toUpperCase()}</b>, below you can find your profile and related info as stored in our systems. 
+                 | Hi <b>#{user.name.toUpperCase()}</b>, below you can find your profile and related info as stored in our systems. You can edit and save your profile attributes from "Personal Information" section.
           
           .row
              .col-lg-12
@@ -42,16 +42,53 @@ html(lang='en')
                              .col-md-3
                                 - if (user.image)
                                     img(id="profile-user-image", style="border: 2px solid #FFFFFF; border-radius: 50%;", width="128px")
-                             .col-md-3
+                             .col-md-5
                                 h1
                                   small
-                                    | #{user.name} (#{user.username})
-                                  br
-                                h3
+                                    | #{user.name}
+                                h4
                                   small
-                                    | #{user.email}
-                                
+                                    | username: <b>#{user.username}</b>
+                                h4
+                                  small
+                                    | email: <b>#{user.email}</b>
+                                h4
+                                  small
+                                    | SocIoTal ID: <b>#{user.idm_id}</b>
+
                              .clearfix
+
+
+                             form(id="profile-form" method="POST", action="/users/#{user._id}", enctype="multipart/form-data", role="form")
+
+
+                                 .panel-body
+                                     .col-md-6
+
+                                         .form-group
+                                             label Street Address
+                                             input.form-control(name="streetAddress" id="streetAddress" placeholder='Street Address')
+                                         .form-group
+                                             label City
+                                             input.form-control(name="city" id="city" placeholder='City or Town')
+                                         .form-group
+                                             label Postal Code
+                                             input.form-control(name="postalCode" id="postalCode" placeholder='Postal Code')
+                                         .form-group
+                                             label Country
+                                             input.form-control(name="country" id="country" placeholder='Country')
+                                     .col-md-6
+                                         .form-group
+                                             label Organization
+                                             input.form-control(name="organization" id="organization" placeholder='Organization' )
+                                         .form-group
+                                             label Department
+                                             input.form-control(name="department" id="department" placeholder='department name' )
+
+
+
+                                 button.btn.btn-primary(type='submit') Save Attributes
+                                 | &nbsp;
 
          .row.page-header
            .col-lg-10
@@ -84,7 +121,17 @@ html(lang='en')
   
   script(type='text/javascript' src='/js/jquery.qrcode-0.11.0.js')
   script(type='text/javascript').
-         $( document ).ready(function() {            
+         $( document ).ready(function() {
+
+
+             $('#streetAddress').val("#{user.address.streetAddress}");
+             $('#city').val("#{user.address.city}");
+             $('#postalCode').val("#{user.address.postalCode}");
+             $('#country').val("#{user.address.country}");
+             $('#department').val("#{user.department}");
+             $('#organization').val("#{user.organization}");
+
+
              $("#qr-code").qrcode({
                  "size": 100,
                  "fill": "#686868",
@@ -101,7 +148,7 @@ html(lang='en')
              } else
                  $('#profile-user-image').attr("src", userImage);
 
-             
+
          });
   
   script(type='text/javascript' src='/js/bootbox.min.js')     

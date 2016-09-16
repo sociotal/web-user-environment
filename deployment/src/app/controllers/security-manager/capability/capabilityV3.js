@@ -20,12 +20,14 @@ fs.readdirSync(libs_path).forEach(function (file) {
 var CERTS_FOLDER = __dirname + "/certs_sociotal/";
 var CAPABILITY_TOKENS_FOLDER = __dirname + "/capability_tokens/";
 
-var KEYSTORE_FILE = "clientkeystore.p12";
-var TRUSTEDCERTS = [ "ca.cer", "UniversidaddeCantabria.cer", "UC.crt" ];
+//var KEYSTORE_FILE = "clientkeystore.p12";
+//var KEYSTORE_FILE = "keystore_client.jks";
+var TRUSTEDCERTS = [ "ca.cer", "UniversidaddeCantabria.cer", "UC.crt", "PrivateRootCA.cer" ];
 var CERTAUTHENTICATION = true;
 var USEDELEGATION = true;
 
 
+var KEYSTORE_FILE = config.capabilityManagerParams.keystore_file;
 var KEYSTORE_PASSWORD = config.capabilityManagerParams.keystore_password;
 var CAPABILITY_MANAGER_ADDRESS = config.capabilityManagerParams.capability_manager_address;
 

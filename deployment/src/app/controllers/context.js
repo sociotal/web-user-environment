@@ -525,7 +525,7 @@ exports.discovery_POST = function (req, res) {
 exports.subscribe = function(form_data, onResult){
     debug("Context Manager subscribeContext");
 
-    var base_url =  "https://" +  form_data.hostname + ":" + config.port;
+    var base_url =  "https://" +  form_data.hostname + ":" + config.portHTTPS;
     var reference = base_url + "/api/channels/" + form_data.channel_id + "/receive";
     console.log(form_data);
 
